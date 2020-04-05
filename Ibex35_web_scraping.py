@@ -36,7 +36,7 @@ soup = BeautifulSoup(page, "lxml")
 #seleccionamos la tabla a partir del Xpath //*[@id="ctl00_Contenido_tblAcciones"] que copiamos con el boton derecho sobre el inspector de html de firefox
 tabla = soup.find('table', attrs={'id': "ctl00_Contenido_tblAcciones"})
 
-tabla2 = soup.find('table', attrs={'id': "ctl00_Contenido_tblÍndice"})
+#tabla2 = soup.find('table', attrs={'id': "ctl00_Contenido_tblÍndice"})
 
 
 # In[16]:
@@ -80,40 +80,19 @@ def iteracionTabla(x):
         nroFila=nroFila+1
     return listado
 
-#recogemos tambien el valor del IBEX 35
-def ibexTotal():
-    listadoExtra=[]
-    nombre="Cierre IBEX35"
-    price=""
-    nroFila=-1
-    for fila in tabla2.find_all("tr"):
-        if nroFila==0:
-            #creamos un contador para recorrer las celdas identificadas con 'td'
-            nroCelda=0
-            for celda in fila.find_all('td'):
-                #guardamos el precio
-                if nroCelda==2:
-                    price=celda.text
-                    listadoExtra.append(nombre)
-                    listadoExtra.append(price)
-
-                nroCelda=nroCelda+1
-        nroFila=nroFila+1
-    return listadoExtra
-
-
 #anadimos los resultados a una sola lista 
 def listadoDiario():
     listadoTotal=[]
-    listadoTotal.append(ibexTotal()) 
+    headerList=["Valor","Cierre","Volumen","Fecha"] 
+    listadoTotal.append(headerList) 
+    #listadoTotal.append(ibexTotal()) 
     for x in range(35):  
         listadoTotal.append(iteracionTabla(x))    
     return listadoTotal
 
-#un solo documento continene: el total diario(creo), la fecha y las 35 empresas con su valor 
+# GM Un solo documento continene las 35 empresasa y la fecha 
 listadoDEF = listadoDiario()
 
-
-# Creamos dataset
+# GM Creamos dataset
 dataset = pd.DataFrame(listadoDEF)
-dataset.to_csv("Dataset2.csv", index = False)
+dataset.to_csv("Dataset2.csv", mode ='a', index = False)
